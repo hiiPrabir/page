@@ -150,16 +150,9 @@ async function fetchUploads(playlistId){
 }
 
 async function autoLoad(){
-  if (!API_KEY || API_KEY === 'YOUR_API_KEY') { allVideos = videosFallback; return; }
-  try{
-    const uploads = await getUploadsPlaylistId(CHANNEL_ID);
-    const list = await fetchUploads(uploads);
-    allVideos = list.length ? list : videosFallback;
-  }catch(e){
-    console.warn('Auto-load failed:', e.message);
-    allVideos = videosFallback;
-  }
+  allVideos = videosFallback;
 }
+
 
 // ======== INIT ========
 function init(){
