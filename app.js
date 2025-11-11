@@ -159,14 +159,18 @@ async function fetchUploads(playlistId){
 }
 
 async function autoLoad(){
-  if(!API_KEY || API_KEY==='YOUR_API_KEY'){ allVideos = videosFallback; return; }
+  if(!API_KEY || API_KEY==='AIzaSyDAKdEZt7lJFtilFrEwOpHzPMQ4VmGUenU'){ allVideos = videosFallback; return; }
   try{
-    const ch = await resolveChannelId(CHANNEL_QUERY);
+    const ch = CHANNEL_ID || await resolveChannelId(CHANNEL_QUERY);
     const up = await getUploadsPlaylistId(ch);
     const list = await fetchUploads(up);
-    allVideos = list.length? list : videosFallback;
-  }catch(e){ console.warn('Auto-load failed:', e.message); allVideos = videosFallback; }
+    allVideos = list.length ? list : videosFallback;
+  }catch(e){
+    console.warn('Auto-load failed:', e.message);
+    allVideos = videosFallback;
+  }
 }
+
 
 // ======== INIT / EVENTS ========
 function init(){
