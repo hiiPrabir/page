@@ -1,6 +1,6 @@
 // ======== CONFIG ========
 // Put your YouTube Data API v3 key here. Get one from Google Cloud → APIs & Services → Credentials.
-const API_KEY = "YOUR_API_KEY"; // ← REPLACE with your key
+const API_KEY = AIzaSyAu8D7GkrkWEj1RIuMO6aRGBY3MOkpNtpA; // ← REPLACE with your key
 const CHANNEL_QUERY = "jobstargetgovt";  // handle or name to resolve the channel
 
 // Fallback manual list (used if API key is missing/invalid)
