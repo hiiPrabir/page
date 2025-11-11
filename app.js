@@ -1,10 +1,7 @@
 // ======== CONFIG ========
 // Put your YouTube Data API v3 key here. Get one from Google Cloud → APIs & Services → Credentials.
-const API_KEY = "AIzaSyDAKdEZt7lJFtilFrEwOpHzPMQ4VmGUenU"; // ← REPLACE with your key
-const CHANNEL_ID = "UCeGw4rSHuOlW0x2R52auMPg"; // <- paste your real Channel ID
-const CHANNEL_QUERY = null;              // disable name search
-  // handle or name to resolve the channel
-
+const API_KEY = "AIzaSyDAKdEZt7lJFtilFrEwOpHzUPMQ4VmGUen"; // ← REPLACE with your key
+const CHANNEL_ID = "UCeGw4rSHuOlW0x2R52auMPg"; // <- paste your real Channel ID 
 // Fallback manual list (used if API key is missing/invalid)
 const videosFallback = [
   { id: "dQw4w9WgXcQ", title: "Sample: Replace with your video", date: "2025-01-01", tags: ["sample"], description: "Add your own IDs or use API auto‑load." }
@@ -159,7 +156,7 @@ async function fetchUploads(playlistId){
 }
 
 async function autoLoad(){
-  if(!API_KEY || API_KEY==='AIzaSyDAKdEZt7lJFtilFrEwOpHzPMQ4VmGUenU'){ allVideos = videosFallback; return; }
+  if(!API_KEY || API_KEY==='YOUR_REAL_KEY_HERE'){ allVideos = videosFallback; return; }
   try{
     const ch = CHANNEL_ID || await resolveChannelId(CHANNEL_QUERY);
     const up = await getUploadsPlaylistId(ch);
