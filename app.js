@@ -4,7 +4,13 @@ const CHANNEL_ID = "UCeGw4rSHuOlW0x2R52auMPg"; // your channel id
 
 // ======== APP (unchanged) ========
 const videosFallback = [
-  { id: "dQw4w9WgXcQ", title: "Sample: Replace with your video", date: "2025-01-01", tags: ["sample"], description: "Add your own IDs or use API auto‑load." }
+  {
+    id: "rlOit4lUTY8",
+    title: "Your Video Title 1",
+    date: "2024-11-10",
+    tags: ["santali", "status"],
+    description: "Your description (optional)"
+  }
 ];
 
 const perPage = 9;
