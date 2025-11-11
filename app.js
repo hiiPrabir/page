@@ -1,13 +1,12 @@
-// ======== CONFIG ========
-// Put your YouTube Data API v3 key here. Get one from Google Cloud → APIs & Services → Credentials.
-const API_KEY = "AIzaSyDAKdEZt7lJFtilFrEwOpHzUPMQ4VmGUen"; // ← REPLACE with your key
-const CHANNEL_ID = "UCeGw4rSHuOlW0x2R52auMPg"; // <- paste your real Channel ID 
-const CHANNEL_QUERY = ""; // leave empty so it will NOT try name search
+// ======== CONFIG (EDIT THESE 2 LINES) ========
+const API_KEY = "YOUR_API_KEY"; // paste inside the quotes
+const CHANNEL_ID = "UCeGw4rSHuOlW0x2R52auMPg"; // your channel id
+
+// ======== APP (unchanged) ========
 const videosFallback = [
   { id: "dQw4w9WgXcQ", title: "Sample: Replace with your video", date: "2025-01-01", tags: ["sample"], description: "Add your own IDs or use API auto‑load." }
 ];
 
-// ======== STATE / HELPERS ========
 const perPage = 9;
 let allVideos = [];
 let activeTag = null;
@@ -91,14 +90,12 @@ function renderGrid(){
     </article>
   `).join('');
 
-  // events for thumbnails and watch-later
   grid.querySelectorAll('[data-id]').forEach(el => el.onclick = ()=> openModal(el.dataset.id, el.dataset.title));
   grid.querySelectorAll('.addLater').forEach(b => b.onclick = (e)=>{
     const id = e.currentTarget.dataset.id; const wl = store.watchLater;
     if (!wl.includes(id)) wl.push(id); store.watchLater = wl;
   });
 
-  // empty / pager
   empty.classList.toggle('hidden', total>0);
   pager.innerHTML = '';
   if (pages>1){
@@ -124,22 +121,13 @@ function openModal(id, title){
 
 function closeModal(){ $('#player').src = ''; $('#modal').classList.add('hidden'); $('#modal').classList.remove('flex'); }
 
-// ======== YOUTUBE API LOAD ========
+// ======== API HELPERS ========
 async function fetchJSON(url){ const r = await fetch(url); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-
-async function resolveChannelId(query){
-  const u = new URL('https://www.googleapis.com/youtube/v3/search');
-  u.search = new URLSearchParams({ part:'snippet', type:'channel', q:query, maxResults:1, key:API_KEY }).toString();
-  const d = await fetchJSON(u); const it = d.items?.[0]; if(!it) throw new Error('Channel not found');
-  return it.snippet.channelId;
-}
-
 async function getUploadsPlaylistId(channelId){
   const u = new URL('https://www.googleapis.com/youtube/v3/channels');
   u.search = new URLSearchParams({ part:'contentDetails', id:channelId, key:API_KEY }).toString();
   const d = await fetchJSON(u); return d.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
 }
-
 async function fetchUploads(playlistId){
   const out = []; let next = '';
   do {
@@ -156,11 +144,10 @@ async function fetchUploads(playlistId){
 }
 
 async function autoLoad(){
-  if(!API_KEY || API_KEY==='YOUR_REAL_KEY_HERE'){ allVideos = videosFallback; return; }
+  if (!API_KEY || API_KEY === 'YOUR_API_KEY') { allVideos = videosFallback; return; }
   try{
-    const ch = CHANNEL_ID || await resolveChannelId(CHANNEL_QUERY);
-    const up = await getUploadsPlaylistId(ch);
-    const list = await fetchUploads(up);
+    const uploads = await getUploadsPlaylistId(CHANNEL_ID);
+    const list = await fetchUploads(uploads);
     allVideos = list.length ? list : videosFallback;
   }catch(e){
     console.warn('Auto-load failed:', e.message);
@@ -168,18 +155,16 @@ async function autoLoad(){
   }
 }
 
-
-// ======== INIT / EVENTS ========
+// ======== INIT ========
 function init(){
-  $('#year').textContent = String(new Date().getFullYear());
-  $('#themeBtn').onclick = ()=> store.theme = (store.theme==='dark'?'light':'dark');
-  $('#clearSearch').onclick = ()=>{ $('#search').value=''; render(); };
-  $('#search').oninput = ()=>{ currentPage = 1; render(); };
-  $('#sortSelect').onchange = ()=> render();
-  $('#watchLaterToggle').onchange = ()=> render();
-  $('#modal').addEventListener('click', (e)=>{ if(e.target===e.currentTarget) closeModal(); });
-  $('#closeModal').onclick = closeModal;
+  document.getElementById('year').textContent = String(new Date().getFullYear());
+  document.getElementById('themeBtn').onclick = ()=> store.theme = (store.theme==='dark'?'light':'dark');
+  document.getElementById('clearSearch').onclick = ()=>{ document.getElementById('search').value=''; render(); };
+  document.getElementById('search').oninput = ()=>{ currentPage = 1; render(); };
+  document.getElementById('sortSelect').onchange = ()=> render();
+  document.getElementById('watchLaterToggle').onchange = ()=> render();
+  document.getElementById('modal').addEventListener('click', (e)=>{ if(e.target===e.currentTarget) closeModal(); });
+  document.getElementById('closeModal').onclick = closeModal;
   render();
 }
-
 document.addEventListener('DOMContentLoaded', async ()=>{ await autoLoad(); init(); });
