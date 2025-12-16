@@ -3,62 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title> Target GOVT jobs santali  • Education Videos</title>
-  <meta name="description" content="Browse and play educational videos from the YouTube channel Target GOVT jobs santali ." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><rect width='256' height='256' rx='48' fill='%23ff0000'/><polygon points='100,80 180,128 100,176' fill='white'/></svg>">
-  <meta name="theme-color" content="#0ea5e9" />
+  <title>Target GOVT Jobs Santali • Education Videos</title>
+
+  <meta name="description" content="Santali education videos for WBP, KP, Group D, Railway exams" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 min-h-screen">
-  <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800">
-    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center gap-3">
-      <button id="themeBtn" class="rounded-xl border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800" title="Toggle theme">🌙/☀️</button>
-      <h1 class="text-xl font-semibold tracking-tight"> Target GOVT jobs santali • Education Videos</h1>
-      <div class="ms-auto flex items-center gap-2 w-full max-w-lg">
-        <input id="search" type="search" placeholder="Search titles, descriptions, tags…" class="w-full rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 px-4 py-2 outline-none focus:ring-2 ring-sky-400" />
-        <button id="clearSearch" class="text-sm px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800">Clear</button>
-      </div>
-    </div>
-  </header>
-  <section class="mx-auto max-w-6xl px-4 pt-6">
-    <div class="flex flex-wrap gap-2 items-center">
-      <span class="text-sm text-zinc-600 dark:text-zinc-400">Filter:</span>
-      <div id="chipRow" class="flex flex-wrap gap-2"></div>
-      <div class="ms-auto flex items-center gap-3">
-        <label class="flex items-center gap-2 text-sm"><input id="watchLaterToggle" type="checkbox" class="size-4"/> Show Watch Later</label>
-        <select id="sortSelect" class="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent px-3 py-2 text-sm">
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
-          <option value="az">Title A→Z</option>
-          <option value="za">Title Z→A</option>
-        </select>
-      </div>
-    </div>
-  </section>
-  <main class="mx-auto max-w-6xl px-4 py-6">
-    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-    <div id="emptyState" class="hidden text-center py-16 text-zinc-600 dark:text-zinc-400">No videos match your filters.</div>
-    <div class="mt-8 flex justify-center gap-2" id="pager"></div>
-  </main>
-  <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4">
-    <div class="w-full max-w-4xl rounded-2xl bg-white dark:bg-zinc-900 shadow-2xl overflow-hidden fade-in">
-      <div class="relative w-full" style="aspect-ratio:16/9">
-        <iframe id="player" class="absolute inset-0 w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-      </div>
-      <div class="p-4 flex items-center gap-3 border-t border-zinc-200 dark:border-zinc-800">
-        <h3 id="modalTitle" class="font-medium truncate"></h3>
-        <a id="openOnYT" class="ms-auto px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm" target="_blank" rel="noopener">Open on YouTube ↗</a>
-        <button id="closeModal" class="px-3 py-2 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">Close</button>
-      </div>
+
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+
+<header class="border-b p-4 flex gap-4 items-center">
+  <h1 class="text-xl font-bold">
+    Target GOVT Jobs Santali
+  </h1>
+
+  <input id="search" type="search" placeholder="Search videos..."
+    class="ms-auto px-4 py-2 rounded-xl border dark:bg-zinc-900">
+
+  <button id="themeBtn" class="px-3 py-2 border rounded-xl">🌙 / ☀️</button>
+</header>
+
+<section class="p-4">
+  <div id="chipRow" class="flex flex-wrap gap-2"></div>
+</section>
+
+<main class="p-4">
+  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+  <p id="emptyState" class="hidden text-center mt-10 text-gray-500">
+    No videos found
+  </p>
+</main>
+
+<!-- MODAL -->
+<div id="modal" class="fixed inset-0 hidden bg-black/70 items-center justify-center">
+  <div class="bg-white dark:bg-zinc-900 rounded-xl w-full max-w-4xl">
+    <iframe id="player" class="w-full aspect-video" allowfullscreen></iframe>
+    <div class="p-4 flex gap-3">
+      <h3 id="modalTitle" class="font-semibold truncate"></h3>
+      <a id="openOnYT" target="_blank" class="ms-auto underline">Open on YouTube</a>
+      <button id="closeModal" class="px-3 py-1 border rounded">Close</button>
     </div>
   </div>
-  <footer class="border-t border-zinc-200 dark:border-zinc-800 py-10">
-    <div class="mx-auto max-w-6xl px-4 text-sm text-zinc-600 dark:text-zinc-400 flex flex-wrap gap-2 items-center">
-      <span>© <span id="year"></span> Target GOVT jobs santali  • YouTube Education</span>
-      <a class="ms-auto underline decoration-dotted" href="https://www.youtube.com/@jobstargetgovt" target="_blank" rel="noopener">Subscribe on YouTube</a>
-    </div>
-  </footer>
-  <script src="app.js"></script>
+</div>
+
+<footer class="text-center p-6 text-sm text-gray-500">
+  © <span id="year"></span> Target GOVT Jobs Santali  
+  • <a href="https://www.youtube.com/@jobstargetgovt" target="_blank">YouTube</a>
+</footer>
+
+<script src="app.js"></script>
 </body>
 </html>
