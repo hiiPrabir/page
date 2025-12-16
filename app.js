@@ -1,183 +1,101 @@
-// ======== CONFIG (EDIT THESE 2 LINES) ========
-const API_KEY = "YOUR_API_KEY"; // paste inside the quotes
-const CHANNEL_ID = "UCeGw4rSHuOlW0x2R52auMPg"; // your channel id
-
-// ======== APP (unchanged) ========
-const videosFallback = [
-  {
-    id: "h9NCbvjt5kA",
-    title: "# এবার থেকে চাকরি পরীক্ষার প্রস্তুতি আরো সহজ,Santali দিয়ে WBP/KP/GROUP D/RAILWAY জন্য special class",
-    date: "2024-11-10",
-    tags: ["santali", "education"],
-    description: "এবার থেকে চাকরি পরীক্ষার প্রস্তুতি আরো সহজ,Santali দিয়ে WBP/KP/GROUP D/RAILWAY এর জন্য special class
-#Santali education channel 
-#Target GOVT jobs santali 
-#WBP 
-#KP
-#GROUP D
-#Railway
-#Rpf
-#Santali education channel 
-#Santali te 
-#subscribe, comment,like
-#facebook link
-    / 16atmykshn  
-#instagram link
-#https://www.instagram...."
-  }
-];
-
+const API_KEY = "PASTE_YOUR_YOUTUBE_API_KEY_HERE";
+const CHANNEL_ID = "UCeGw4rSHuOlW0x2R52auMPg";
 const perPage = 9;
 let allVideos = [];
-let activeTag = null;
 let currentPage = 1;
+let activeTag = null;
 
 const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
 
-const store = {
-  get theme(){ return localStorage.getItem("theme") || (matchMedia('(prefers-color-scheme: dark)').matches? 'dark':'light'); },
-  set theme(v){ localStorage.setItem("theme", v); document.documentElement.classList.toggle('dark', v==='dark'); },
-  get watchLater(){ try{return JSON.parse(localStorage.getItem('watchLater')||'[]')}catch{ return [] } },
-  set watchLater(v){ localStorage.setItem('watchLater', JSON.stringify(v)); render(); }
-};
-document.documentElement.classList.toggle('dark', store.theme==='dark');
-
-function youtubeThumb(id){ return `https://img.youtube.com/vi/${id}/hqdefault.jpg`; }
-function youtubeWatch(id){ return `https://www.youtube.com/watch?v=${id}`; }
-function youtubeEmbed(id){ return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`; }
-
-function uniqueTags(list){ const s = new Set(); list.forEach(v => (v.tags||[]).forEach(t=>s.add(t))); return [...s].sort((a,b)=>a.localeCompare(b)); }
-
-function getFilteredSorted(){
-  const q = $('#search').value.trim().toLowerCase();
-  const wlOnly = $('#watchLaterToggle').checked;
-  const wl = store.watchLater;
-  let arr = allVideos.filter(v => {
-    if (wlOnly && !wl.includes(v.id)) return false;
-    let hit = !q || v.title?.toLowerCase().includes(q) || v.description?.toLowerCase().includes(q) || (v.tags||[]).some(t=>t.toLowerCase().includes(q));
-    if (activeTag) hit = hit && (v.tags||[]).includes(activeTag);
-    return hit;
-  });
-  const sort = $('#sortSelect').value;
-  arr.sort((a,b)=>{
-    if (sort==='newest') return (b.date||'').localeCompare(a.date||'');
-    if (sort==='oldest') return (a.date||'').localeCompare(b.date||'');
-    if (sort==='az') return a.title.localeCompare(b.title);
-    if (sort==='za') return b.title.localeCompare(a.title);
-    return 0;
-  });
-  return arr;
+function youtubeThumb(id){
+  return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+}
+function youtubeWatch(id){
+  return `https://www.youtube.com/watch?v=${id}`;
+}
+function youtubeEmbed(id){
+  return `https://www.youtube.com/embed/${id}?autoplay=1`;
 }
 
-function renderChips(){
-  const row = $('#chipRow'); row.innerHTML = '';
-  const mk = (label, tag=null) => {
-    const b = document.createElement('button');
-    b.className = `text-sm px-3 py-1.5 rounded-full border ${activeTag===tag? 'bg-sky-600 text-white border-sky-600' : 'border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`;
-    b.textContent = label; b.onclick = ()=>{ activeTag = tag; currentPage = 1; render(); };
-    return b;
-  };
-  row.append(mk('All'));
-  uniqueTags(allVideos).forEach(t => row.append(mk(t, t)));
+async function fetchJSON(url){
+  const r = await fetch(url);
+  if(!r.ok) throw new Error("API error");
+  return r.json();
 }
 
-function renderGrid(){
-  const grid = $('#grid'); const empty = $('#emptyState'); const pager = $('#pager');
-  const arr = getFilteredSorted();
-  const total = arr.length; const pages = Math.max(1, Math.ceil(total / perPage));
-  currentPage = Math.min(Math.max(1, currentPage), pages);
-  const start = (currentPage-1)*perPage; const slice = arr.slice(start, start+perPage);
-
-  grid.innerHTML = slice.map(v => `
-    <article class="group border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden bg-white/70 dark:bg-zinc-900/70 shadow-sm hover:shadow transition">
-      <div class="relative cursor-pointer" data-id="${v.id}" data-title="${(v.title||'').replace(/"/g,'&quot;')}">
-        <img loading="lazy" class="w-full aspect-video object-cover" src="${youtubeThumb(v.id)}" alt="${v.title||''}">
-        <div class="absolute inset-0 hidden group-hover:flex items-center justify-center bg-black/40 text-white text-xl">▶</div>
-      </div>
-      <div class="p-4 flex flex-col gap-2">
-        <h3 class="font-semibold leading-snug line-clamp-2">${v.title||''}</h3>
-        <p class="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">${v.description||''}</p>
-        <div class="flex flex-wrap gap-1">
-          ${(v.tags||[]).map(t=>`<span class="text-xs px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800">${t}</span>`).join('')}
-        </div>
-        <div class="mt-1 flex items-center gap-2 text-xs text-zinc-500">
-          <span>${v.date||''}</span>
-          <button class="ms-auto px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700 addLater" data-id="${v.id}">Watch later</button>
-          <a class="px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700" href="${youtubeWatch(v.id)}" target="_blank" rel="noopener">YouTube ↗</a>
-        </div>
-      </div>
-    </article>
-  `).join('');
-
-  grid.querySelectorAll('[data-id]').forEach(el => el.onclick = ()=> openModal(el.dataset.id, el.dataset.title));
-  grid.querySelectorAll('.addLater').forEach(b => b.onclick = (e)=>{
-    const id = e.currentTarget.dataset.id; const wl = store.watchLater;
-    if (!wl.includes(id)) wl.push(id); store.watchLater = wl;
-  });
-
-  empty.classList.toggle('hidden', total>0);
-  pager.innerHTML = '';
-  if (pages>1){
-    const mk = (label, p, dis=false) => {
-      const btn = document.createElement('button'); btn.textContent = label;
-      btn.className = `px-3 py-1.5 rounded-xl border text-sm ${dis? 'opacity-50 cursor-not-allowed':'hover:bg-zinc-100 dark:hover:bg-zinc-800'} border-zinc-300 dark:border-zinc-700`;
-      btn.disabled = dis; btn.onclick = ()=>{ currentPage = p; render(); }; return btn;
-    };
-    pager.append(mk('‹ Prev', currentPage-1, currentPage===1));
-    for(let p=1;p<=pages;p++){ pager.append(mk(String(p), p, p===currentPage)); }
-    pager.append(mk('Next ›', currentPage+1, currentPage===pages));
-  }
+async function getUploadsPlaylistId(){
+  const url =
+    `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${CHANNEL_ID}&key=${API_KEY}`;
+  const data = await fetchJSON(url);
+  return data.items[0].contentDetails.relatedPlaylists.uploads;
 }
 
-function render(){ renderChips(); renderGrid(); }
-
-function openModal(id, title){
-  $('#player').src = youtubeEmbed(id);
-  $('#modalTitle').textContent = title||'';
-  $('#openOnYT').href = youtubeWatch(id);
-  $('#modal').classList.remove('hidden'); $('#modal').classList.add('flex');
-}
-
-function closeModal(){ $('#player').src = ''; $('#modal').classList.add('hidden'); $('#modal').classList.remove('flex'); }
-
-// ======== API HELPERS ========
-async function fetchJSON(url){ const r = await fetch(url); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-async function getUploadsPlaylistId(channelId){
-  const u = new URL('https://www.googleapis.com/youtube/v3/channels');
-  u.search = new URLSearchParams({ part:'contentDetails', id:channelId, key:API_KEY }).toString();
-  const d = await fetchJSON(u); return d.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
-}
-async function fetchUploads(playlistId){
-  const out = []; let next = '';
+async function fetchUploads(pid){
+  const vids = [];
+  let next = "";
   do {
-    const u = new URL('https://www.googleapis.com/youtube/v3/playlistItems');
-    u.search = new URLSearchParams({ part:'snippet,contentDetails', maxResults:50, playlistId, key:API_KEY, pageToken:next }).toString();
-    const d = await fetchJSON(u);
-    for(const it of (d.items||[])){
-      const s = it.snippet||{};
-      out.push({ id: it.contentDetails?.videoId, title: s.title||'Untitled', date: (s.publishedAt||'').slice(0,10), tags: (s.tags||[]).slice(0,5), description: s.description||'' });
-    }
-    next = d.nextPageToken||'';
+    const url =
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${pid}&key=${API_KEY}&pageToken=${next}`;
+    const d = await fetchJSON(url);
+    d.items.forEach(v => {
+      vids.push({
+        id: v.snippet.resourceId.videoId,
+        title: v.snippet.title,
+        date: v.snippet.publishedAt.slice(0,10),
+        description: v.snippet.description
+      });
+    });
+    next = d.nextPageToken || "";
   } while(next);
-  return out;
+  return vids;
 }
 
-async function autoLoad(){
-  allVideos = videosFallback;
+function render(){
+  const grid = $("#grid");
+  grid.innerHTML = "";
+
+  if(allVideos.length === 0){
+    $("#emptyState").classList.remove("hidden");
+    return;
+  }
+
+  $("#emptyState").classList.add("hidden");
+
+  allVideos.slice(0, perPage).forEach(v => {
+    grid.innerHTML += `
+      <div class="border rounded-xl overflow-hidden fade-in">
+        <img src="${youtubeThumb(v.id)}" class="w-full cursor-pointer"
+             onclick="openModal('${v.id}','${v.title.replace(/'/g,"")}')">
+        <div class="p-3">
+          <h3 class="font-semibold line-clamp-2">${v.title}</h3>
+          <p class="text-xs text-gray-500">${v.date}</p>
+          <a href="${youtubeWatch(v.id)}" target="_blank" class="text-sm underline">
+            Watch on YouTube
+          </a>
+        </div>
+      </div>
+    `;
+  });
 }
 
+window.openModal = function(id,title){
+  $("#player").src = youtubeEmbed(id);
+  $("#modalTitle").textContent = title;
+  $("#openOnYT").href = youtubeWatch(id);
+  $("#modal").classList.remove("hidden");
+  $("#modal").classList.add("flex");
+}
 
-// ======== INIT ========
-function init(){
-  document.getElementById('year').textContent = String(new Date().getFullYear());
-  document.getElementById('themeBtn').onclick = ()=> store.theme = (store.theme==='dark'?'light':'dark');
-  document.getElementById('clearSearch').onclick = ()=>{ document.getElementById('search').value=''; render(); };
-  document.getElementById('search').oninput = ()=>{ currentPage = 1; render(); };
-  document.getElementById('sortSelect').onchange = ()=> render();
-  document.getElementById('watchLaterToggle').onchange = ()=> render();
-  document.getElementById('modal').addEventListener('click', (e)=>{ if(e.target===e.currentTarget) closeModal(); });
-  document.getElementById('closeModal').onclick = closeModal;
+$("#closeModal").onclick = () => {
+  $("#player").src = "";
+  $("#modal").classList.add("hidden");
+};
+
+async function init(){
+  $("#year").textContent = new Date().getFullYear();
+  const pid = await getUploadsPlaylistId();
+  allVideos = await fetchUploads(pid);
   render();
 }
-document.addEventListener('DOMContentLoaded', async ()=>{ await autoLoad(); init(); });
+
+document.addEventListener("DOMContentLoaded", init);
